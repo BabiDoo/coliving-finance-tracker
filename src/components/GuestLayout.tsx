@@ -68,8 +68,8 @@ export default function GuestLayout() {
             }
             title="Meu Perfil"
           >
-            <span className="text-rose-800 font-black uppercase text-[10px]">
-              AGR
+            <span className="text-rose-800 font-black uppercase text-sm">
+              {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
             </span>
           </NavLink>
           <button
