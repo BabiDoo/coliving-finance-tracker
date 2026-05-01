@@ -17,9 +17,17 @@ export default function PWAInstallInstructions() {
 
     // Detect platform
     const userAgent = window.navigator.userAgent.toLowerCase();
-    if (/iphone|ipad|ipod/.test(userAgent)) {
+    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+    const isAndroid = /android/.test(userAgent);
+
+    if (!isIOS && !isAndroid) {
+      // Do not show the mobile install prompt on desktop browsers
+      return;
+    }
+
+    if (isIOS) {
       setPlatform('ios');
-    } else if (/android/.test(userAgent)) {
+    } else if (isAndroid) {
       setPlatform('android');
     }
 
@@ -89,12 +97,6 @@ export default function PWAInstallInstructions() {
               )}
             </div>
 
-            <div className="mt-6 flex items-center gap-2 bg-slate-800 p-3">
-              <Info size={14} className="text-blue-400 shrink-0" strokeWidth={3} />
-              <p className="text-[9px] font-black uppercase text-slate-400">
-                O Casa em Dia funciona como um PWA (Web App Progressivo) nativo.
-              </p>
-            </div>
           </div>
         </motion.div>
       )}
