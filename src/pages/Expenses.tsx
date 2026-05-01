@@ -95,16 +95,16 @@ export default function Expenses() {
                 </button>
               )}
 
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-start gap-4">
+              <div className="flex items-start justify-between mb-6 gap-2">
+                <div className="flex items-start gap-3 flex-1 min-w-0">
                   <div className={cn(
                     "w-12 h-12 border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] flex items-center justify-center shrink-0",
                     "bg-indigo-100 text-indigo-700"
                   )}>
                     <Clock size={24} strokeWidth={3} />
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="font-black text-xl text-slate-900 leading-none uppercase tracking-tight truncate">{expense.description}</h3>
+                  <div className="min-w-0 flex-1 pr-2">
+                    <h3 className="font-black text-lg sm:text-xl text-slate-900 leading-tight uppercase tracking-tight break-words">{expense.description}</h3>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 bg-slate-100 px-1.5 py-0.5 rounded-sm inline-block">
                       {expense.category}
                     </p>
@@ -112,7 +112,7 @@ export default function Expenses() {
                 </div>
                 
                 <div className={cn(
-                  "px-3 py-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] text-[10px] font-black uppercase tracking-widest h-fit",
+                  "shrink-0 px-2 sm:px-3 py-1 border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] text-[9px] sm:text-[10px] font-black uppercase tracking-widest h-fit",
                   (expense.status === 'paid' || isConfirmed) ? "bg-emerald-500 text-white" : 
                   expense.status === 'overdue' ? "bg-rose-500 text-white" : "bg-amber-400 text-slate-900"
                 )}>
