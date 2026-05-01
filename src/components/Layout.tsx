@@ -50,7 +50,7 @@ export default function Layout() {
             )}
             title="Meu Perfil"
           >
-            <span className="text-emerald-800 font-black uppercase text-[10px]">{profile?.role === 'admin' ? 'ADM' : 'MOR'}</span>
+            <span className="text-emerald-800 font-black uppercase text-sm">{profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}</span>
           </NavLink>
           <button 
             onClick={() => signOut()} 
