@@ -17,24 +17,24 @@ function AppRoutes() {
     return <div className="flex h-screen items-center justify-center bg-slate-50"><div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>;
   }
 
-  if (!profile) {
-    return <Login />;
-  }
-
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="expenses" element={<Expenses />} />
-          <Route path="notices" element={<Notices />} />
-          <Route path="history" element={<History />} />
-          {profile.role === 'admin' && (
-            <Route path="admin" element={<Admin />} />
-          )}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-      </Routes>
+      {!profile ? (
+        <Login />
+      ) : (
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="expenses" element={<Expenses />} />
+            <Route path="notices" element={<Notices />} />
+            <Route path="history" element={<History />} />
+            {profile.role === 'admin' && (
+              <Route path="admin" element={<Admin />} />
+            )}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Route>
+        </Routes>
+      )}
       <PWAInstallInstructions />
     </>
   );

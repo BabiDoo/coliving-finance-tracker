@@ -50,8 +50,8 @@ Siga as instruções abaixo para executar o **Casa em Dia** no seu computador.
 
 1. Clone o repositório
 ```bash
-git clone https://github.com/SEU_USUARIO/casa-em-dia.git
-cd casa-em-dia
+git clone https://github.com/BabiDoo/coliving-finance-tracker.git
+cd coliving-finance-tracker
 ```
 
 2. Instale as dependências
