@@ -7,6 +7,7 @@ import Expenses from './pages/Expenses';
 import Notices from './pages/Notices';
 import History from './pages/History';
 import Admin from './pages/Admin';
+import Settings from './pages/Settings';
 import Layout from './components/Layout';
 import PWAInstallInstructions from './components/PWAInstallInstructions';
 
@@ -31,6 +32,7 @@ function AppRoutes() {
             {profile.role === 'admin' && (
               <Route path="admin" element={<Admin />} />
             )}
+            <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Route>
         </Routes>

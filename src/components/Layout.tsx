@@ -42,9 +42,16 @@ export default function Layout() {
           <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mt-1.5">Gestão Compartilhada</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-9 w-9 bg-emerald-100 rounded-full flex items-center justify-center border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]">
-            <span className="text-emerald-700 font-black uppercase text-[10px]">{profile?.role === 'admin' ? 'ADM' : 'MOR'}</span>
-          </div>
+          <NavLink 
+            to="/settings"
+            className={({ isActive }) => cn(
+              "h-9 w-9 rounded-full flex items-center justify-center border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] transition-colors active:shadow-none active:translate-x-[1px] active:translate-y-[1px]",
+              isActive ? "bg-emerald-300" : "bg-emerald-100 hover:bg-emerald-200"
+            )}
+            title="Meu Perfil"
+          >
+            <span className="text-emerald-800 font-black uppercase text-[10px]">{profile?.role === 'admin' ? 'ADM' : 'MOR'}</span>
+          </NavLink>
           <button 
             onClick={() => signOut()} 
             className="p-2 bg-white border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] text-slate-900 hover:bg-slate-50 transition-colors active:shadow-none active:translate-x-[1px] active:translate-y-[1px]"
