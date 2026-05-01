@@ -9,6 +9,10 @@ import History from './pages/History';
 import Admin from './pages/Admin';
 import Settings from './pages/Settings';
 import Layout from './components/Layout';
+import GuestLayout from './components/GuestLayout';
+import GuestDashboard from './pages/GuestDashboard';
+import GuestNotices from './pages/GuestNotices';
+import AdminGuestArea from './pages/AdminGuestArea';
 import PWAInstallInstructions from './components/PWAInstallInstructions';
 
 function AppRoutes() {
@@ -22,6 +26,15 @@ function AppRoutes() {
     <>
       {!profile ? (
         <Login />
+      ) : profile.role === 'guest' ? (
+        <Routes>
+          <Route path="/" element={<GuestLayout />}>
+            <Route index element={<GuestDashboard />} />
+            <Route path="notices" element={<GuestNotices />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Route>
+        </Routes>
       ) : (
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -30,7 +43,10 @@ function AppRoutes() {
             <Route path="notices" element={<Notices />} />
             <Route path="history" element={<History />} />
             {profile.role === 'admin' && (
-              <Route path="admin" element={<Admin />} />
+              <>
+                <Route path="admin" element={<Admin />} />
+                <Route path="guest-area" element={<AdminGuestArea />} />
+              </>
             )}
             <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" />} />

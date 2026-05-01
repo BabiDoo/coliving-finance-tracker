@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Expense, Notice, PaymentHistory } from '../types';
+import { Expense, Notice, PaymentHistory, User, GuestInteraction } from '../types';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
@@ -15,6 +15,10 @@ interface AppContextType {
   deleteNotice: (id: string) => Promise<void>;
   registerPayment: (expenseId: string, amount: number) => Promise<void>;
   confirmPayment: (paymentId: string) => Promise<void>;
+  guestInteractions: GuestInteraction[];
+  addGuestInteraction: (data: Partial<GuestInteraction>) => Promise<void>;
+  updateGuestInteractionStatus: (id: string, status: GuestInteraction['status']) => Promise<void>;
+  deleteGuestInteraction: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -25,6 +29,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [history, setHistory] = useState<PaymentHistory[]>([]);
   const [houseMembers, setHouseMembers] = useState<User[]>([]);
+  const [guestInteractions, setGuestInteractions] = useState<GuestInteraction[]>([]);
 
   useEffect(() => {
     if (profile) {
@@ -42,48 +47,58 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const paymentsSub = supabase.channel('public:payments')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'payments' }, fetchData)
         .subscribe();
+        
+      const guestSub = supabase.channel('public:guest_interactions')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'guest_interactions' }, fetchData)
+        .subscribe();
 
       return () => {
         supabase.removeChannel(expensesSub);
         supabase.removeChannel(noticesSub);
         supabase.removeChannel(paymentsSub);
+        supabase.removeChannel(guestSub);
       };
     } else {
       setExpenses([]);
       setNotices([]);
       setHistory([]);
       setHouseMembers([]);
+      setGuestInteractions([]);
     }
   }, [profile]);
 
   const fetchData = async () => {
-    const [expensesRes, noticesRes, historyRes, usersRes] = await Promise.all([
+    if (profile?.role === 'guest') {
+      const [interactionsRes, usersRes] = await Promise.all([
+        supabase.from('guest_interactions').select('*, users(name)').order('created_at', { ascending: false }),
+        supabase.from('users').select('*').order('role', { ascending: true })
+      ]);
+      if (interactionsRes.data) {
+        setGuestInteractions(interactionsRes.data.map(i => ({ ...i, author_name: i.users?.name })));
+      }
+      if (usersRes.data) setHouseMembers(usersRes.data);
+      return;
+    }
+
+    const queries: any[] = [
       supabase.from('expenses').select('*').order('created_at', { ascending: false }),
       supabase.from('notices').select('*, users(name)').order('created_at', { ascending: false }),
       supabase.from('payments').select('*, expenses(description), users(name)').order('date', { ascending: false }),
       supabase.from('users').select('*').order('role', { ascending: true })
-    ]);
+    ];
+
+    if (profile?.role === 'admin') {
+      queries.push(supabase.from('guest_interactions').select('*, users(name)').order('created_at', { ascending: false }));
+    }
+
+    const results = await Promise.all(queries);
+    const [expensesRes, noticesRes, historyRes, usersRes, interactionsRes] = results;
 
     if (expensesRes.data) setExpenses(expensesRes.data);
-    
-    if (noticesRes.data) {
-      setNotices(noticesRes.data.map(n => ({
-        ...n,
-        author_name: n.users?.name
-      })));
-    }
-    
-    if (historyRes.data) {
-      setHistory(historyRes.data.map(h => ({
-        ...h,
-        expense_description: h.expenses?.description,
-        user_name: h.users?.name
-      })));
-    }
-
-    if (usersRes.data) {
-      setHouseMembers(usersRes.data);
-    }
+    if (noticesRes.data) setNotices(noticesRes.data.map(n => ({ ...n, author_name: n.users?.name })));
+    if (historyRes.data) setHistory(historyRes.data.map(h => ({ ...h, expense_description: h.expenses?.description, user_name: h.users?.name })));
+    if (usersRes.data) setHouseMembers(usersRes.data);
+    if (interactionsRes?.data) setGuestInteractions(interactionsRes.data.map((i: any) => ({ ...i, author_name: i.users?.name })));
   };
 
   const addExpense = async (expenseData: Omit<Expense, 'id' | 'created_at' | 'created_by'>) => {
@@ -200,11 +215,42 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const addGuestInteraction = async (data: Partial<GuestInteraction>) => {
+    if (!profile) return;
+    
+    const temp: any = {
+      id: `temp-${Date.now()}`,
+      ...data,
+      status: data.status || 'pending',
+      author_id: profile.id,
+      created_at: new Date().toISOString(),
+      author_name: profile.name || 'Você'
+    };
+    
+    setGuestInteractions(prev => [temp, ...prev]);
+
+    await supabase.from('guest_interactions').insert([{
+      ...data,
+      author_id: profile.id
+    }]);
+  };
+
+  const updateGuestInteractionStatus = async (id: string, status: GuestInteraction['status']) => {
+    setGuestInteractions(prev => prev.map(i => i.id === id ? { ...i, status } : i));
+    await supabase.from('guest_interactions').update({ status }).eq('id', id);
+  };
+
+  const deleteGuestInteraction = async (id: string) => {
+    setGuestInteractions(prev => prev.filter(i => i.id !== id));
+    await supabase.from('guest_interactions').delete().eq('id', id);
+  };
+
   return (
     <AppContext.Provider value={{ 
-      expenses, notices, history, houseMembers,
+      expenses, notices, history, houseMembers, guestInteractions,
       addExpense, updateExpenseStatus, deleteExpense,
-      addNotice, deleteNotice, registerPayment, confirmPayment 
+      addNotice, deleteNotice, registerPayment, confirmPayment,
+      addGuestInteraction, updateGuestInteractionStatus, deleteGuestInteraction
     }}>
       {children}
     </AppContext.Provider>

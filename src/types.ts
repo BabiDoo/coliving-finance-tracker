@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'resident';
+export type UserRole = 'admin' | 'resident' | 'guest';
 export type UserGroup = 'individual' | 'couple';
 
 export interface User {
@@ -7,6 +7,21 @@ export interface User {
   email: string;
   role: UserRole;
   group: UserGroup;
+}
+
+export type GuestInteractionType = 'notice' | 'request' | 'complaint' | 'invite';
+export type GuestInteractionStatus = 'pending' | 'accepted' | 'rejected' | string;
+
+export interface GuestInteraction {
+  id: string;
+  type: GuestInteractionType;
+  title?: string;
+  duration?: string;
+  content: string;
+  status: GuestInteractionStatus;
+  author_id: string;
+  created_at: string;
+  author_name?: string;
 }
 
 export type ExpenseStatus = 'pending' | 'paid' | 'overdue';

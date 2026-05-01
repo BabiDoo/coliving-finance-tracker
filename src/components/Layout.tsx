@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, ReceiptText, Megaphone, History as HistoryIcon, ShieldCheck, LogOut, WifiOff } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, Megaphone, History as HistoryIcon, ShieldCheck, LogOut, WifiOff, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -93,21 +93,39 @@ export default function Layout() {
           ))}
           
           {profile?.role === 'admin' && (
-            <NavLink
-              to="/admin"
-              className={({ isActive }) => cn(
-                "flex flex-col items-center gap-1 transition-all px-2 py-1 relative",
-                isActive ? "text-slate-900 bg-amber-100 border-2 border-slate-900" : "text-slate-400 opacity-80 hover:text-slate-900"
-              )}
-            >
-              {({ isActive }) => (
-                <>
-                  <ShieldCheck size={20} strokeWidth={isActive ? 3 : 2} />
-                  <span className="text-[8px] font-black uppercase tracking-widest">Admin</span>
-                  {!isActive && <div className="absolute top-0 right-0 w-2 h-2 bg-amber-500 border border-slate-900 rounded-full"></div>}
-                </>
-              )}
-            </NavLink>
+            <>
+              <NavLink
+                to="/admin"
+                className={({ isActive }) => cn(
+                  "flex flex-col items-center gap-1 transition-all px-2 py-1 relative",
+                  isActive ? "text-slate-900 bg-amber-100 border-2 border-slate-900" : "text-slate-400 opacity-80 hover:text-slate-900"
+                )}
+              >
+                {({ isActive }) => (
+                  <>
+                    <ShieldCheck size={20} strokeWidth={isActive ? 3 : 2} />
+                    <span className="text-[8px] font-black uppercase tracking-widest">Admin</span>
+                    {!isActive && <div className="absolute top-0 right-0 w-2 h-2 bg-amber-500 border border-slate-900 rounded-full"></div>}
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink
+                to="/guest-area"
+                className={({ isActive }) => cn(
+                  "flex flex-col items-center gap-1 transition-all px-2 py-1 relative",
+                  isActive ? "text-slate-900 bg-rose-100 border-2 border-slate-900" : "text-slate-400 opacity-80 hover:text-rose-500"
+                )}
+              >
+                {({ isActive }) => (
+                  <>
+                    <Heart size={20} strokeWidth={isActive ? 3 : 2} />
+                    <span className="text-[8px] font-black uppercase tracking-widest">+1</span>
+                    {!isActive && <div className="absolute top-0 right-0 w-2 h-2 bg-rose-500 border border-slate-900 rounded-full"></div>}
+                  </>
+                )}
+              </NavLink>
+            </>
           )}
         </div>
       </nav>

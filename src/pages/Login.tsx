@@ -20,7 +20,7 @@ export default function Login() {
     });
 
     if (error) {
-      setError('Credenciais inválidas. Tente novamente.');
+      setError(`Erro Supabase: ${error.message}`);
       setLoading(false);
     }
   };
