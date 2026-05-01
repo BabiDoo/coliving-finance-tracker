@@ -112,6 +112,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addNotice = async (content: string) => {
     if (!profile) return;
+
+    // Atualização otimista
+    const tempNotice = {
+      id: `temp-${Date.now()}`,
+      content,
+      author_id: profile.id,
+      created_at: new Date().toISOString(),
+      author_name: profile.name || 'Você'
+    };
+    
+    setNotices(prev => [tempNotice as any, ...prev]);
+
     await supabase.from('notices').insert([{
       content,
       author_id: profile.id
@@ -119,6 +131,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteNotice = async (id: string) => {
+    // Atualização otimista
+    setNotices(prev => prev.filter(n => n.id !== id));
     await supabase.from('notices').delete().eq('id', id);
   };
 

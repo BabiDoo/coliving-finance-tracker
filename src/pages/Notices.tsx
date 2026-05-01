@@ -150,7 +150,7 @@ export default function Notices() {
               {!notice.isSystem && (profile?.id === notice.author_id || profile?.role === 'admin') && (
                 <button 
                   onClick={() => deleteNotice(notice.id)}
-                  className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500 text-white border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] flex items-center justify-center hover:bg-rose-600 transition-colors opacity-0 group-hover:opacity-100"
+                  className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500 text-white border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] flex items-center justify-center hover:bg-rose-600 transition-colors"
                 >
                   <Trash2 size={16} strokeWidth={3} />
                 </button>
