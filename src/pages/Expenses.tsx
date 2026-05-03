@@ -166,7 +166,7 @@ export default function Expenses() {
                 <div className="mt-6 border-t-2 border-slate-900 pt-4">
                   <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-3">Status de Pagamento</p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {houseMembers.map(member => {
+                    {houseMembers.filter(member => member.role === 'admin' || member.role === 'resident').map(member => {
                       const memberPaid = history.some(h => h.expense_id === expense.id && h.user_id === member.id && h.status === 'confirmed');
                       return (
                         <div key={member.id} className="flex items-center justify-between bg-white px-3 py-2 border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]">
